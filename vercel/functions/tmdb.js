@@ -2,6 +2,13 @@ export async function handler(event) {
   const API_KEY = process.env.TMDB_API_KEY;
   const endpoint = event.queryStringParameters.endpoint || "";
 
+  if (!API_KEY) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "TMDB API key missing" }),
+    };
+  }
+
   const separator = endpoint.includes("?") ? "&" : "?";
   const url = `https://api.themoviedb.org/3/${endpoint}${separator}api_key=${API_KEY}`;
 
@@ -13,7 +20,7 @@ export async function handler(event) {
       statusCode: 200,
       body: JSON.stringify(data),
     };
-  } catch (error) {
+  } catch {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "TMDB fetch failed" }),
