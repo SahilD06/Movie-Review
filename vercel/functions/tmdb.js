@@ -1,12 +1,9 @@
-export async function handler(event) {
+export default async function handler(req, res) {
   const API_KEY = process.env.TMDB_API_KEY;
-  const endpoint = event.queryStringParameters.endpoint || "";
+  const endpoint = req.query.endpoint || "";
 
   if (!API_KEY) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "TMDB API key missing" }),
-    };
+    return res.status(500).json({ error: "TMDB API key missing" });
   }
 
   const separator = endpoint.includes("?") ? "&" : "?";
@@ -15,15 +12,8 @@ export async function handler(event) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(data),
-    };
+    res.status(200).json(data);
   } catch {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "TMDB fetch failed" }),
-    };
+    res.status(500).json({ error: "TMDB fetch failed" });
   }
 }
