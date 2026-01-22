@@ -120,7 +120,7 @@ let totalPages = 1;
 // Fetch trending movies with page number
 async function fetchTrendingMovies(page = 1) {
 try {
-const response = await fetch(`/.netlify/functions/tmdb?endpoint=trending/movie/week&page=${page}`);
+const response = await fetch(`/api/tmdb?endpoint=trending/movie/week&page=${page}`);
 const data = await response.json();
 
 displayMovies(data.results, 'trending-movies');
@@ -176,7 +176,7 @@ searchTimeout = setTimeout(() => searchMovies(query), 500);
 
 async function searchMovies(query) {
 try {
-const response = await fetch(`/.netlify/functions/tmdb?endpoint=search/movie?query=${encodeURIComponent(query)}`);
+const response = await fetch(`/api/tmdb?endpoint=search/movie?query=${encodeURIComponent(query)}`);
 const data = await response.json();
 displayMovies(data.results, 'search-results');
 } catch (error) {
@@ -214,7 +214,7 @@ container.innerHTML = movies.map(movie => `
 // Show movie details with reviews
 async function showMovieDetails(movieId) {
 try {
-const response = await fetch(`/.netlify/functions/tmdb?endpoint=movie/${movieId}?`);
+const response = await fetch(`/api/tmdb?endpoint=movie/${movieId}?`);
 const movie = await response.json();
 
 // Get reviews for this movie from local storage
