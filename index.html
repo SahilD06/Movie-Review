@@ -6,7 +6,6 @@
 <title>Movie Review Website</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-/* Custom scrollbar */
 ::-webkit-scrollbar {
 width: 8px;
 }
@@ -17,7 +16,6 @@ background: #1a1a1a;
 background: #ef4444;
 border-radius: 4px;
 }
-/* Star rating */
 .star {
 cursor: pointer;
 transition: color 0.2s;
@@ -29,7 +27,7 @@ color: #fbbf24;
 </style>
 </head>
 <body class="bg-black text-white">
-<!-- Navigation -->
+
 <nav class="bg-black border-b border-gray-800 sticky top-0 z-50">
 <div class="container mx-auto px-4 py-4 flex justify-between items-center">
 <h1 class="text-2xl font-bold text-red-500">🎬 MovieReviews</h1>
@@ -41,16 +39,13 @@ color: #fbbf24;
 </div>
 </nav>
 
-<!-- Home Section -->
 <section id="home" class="section active container mx-auto px-4 py-8">
 <h2 class="text-3xl font-bold mb-6">Trending Movies</h2>
 
-<!-- Trending Movies Grid -->
 <div id="trending-movies" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-<!-- Movies will be loaded here -->
+
 </div>
 
-<!-- Pagination Controls -->
 <div class="flex justify-center gap-4 mt-6">
 <button id="prev-page" onclick="changePage(-1)" class="px-4 py-2 bg-gray-800 rounded hover:bg-gray-700">Previous</button>
 <span id="current-page" class="px-4 py-2 text-gray-300"></span>
@@ -59,7 +54,6 @@ color: #fbbf24;
 </section>
 
 
-<!-- Search Section -->
 <section id="search" class="section hidden container mx-auto px-4 py-8">
 <h2 class="text-3xl font-bold mb-6">Search Movies</h2>
 <div class="mb-6">
@@ -72,23 +66,20 @@ onkeyup="handleSearch(event)"
 />
 </div>
 <div id="search-results" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-<!-- Search results will appear here -->
+
 </div>
 </section>
 
-<!-- My Reviews Section -->
 <section id="my-reviews" class="section hidden container mx-auto px-4 py-8">
 <h2 class="text-3xl font-bold mb-6">My Reviews</h2>
 <div id="reviews-list" class="space-y-4">
-<!-- Reviews will be loaded here -->
+
 </div>
 </section>
 
-<!-- Movie Details Modal -->
 <div id="movie-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4" onclick="closeModal(event)">
 <div class="bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
 <div id="modal-content">
-<!-- Movie details will be loaded here -->
 </div>
 </div>
 </div>
@@ -99,7 +90,6 @@ const IMG_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
 let reviews = JSON.parse(localStorage.getItem('movieReviews') || '[]');
 
-// Section navigation
 function showSection(sectionName) {
 document.querySelectorAll('.section').forEach(section => {
 section.classList.add('hidden');
@@ -113,11 +103,9 @@ displayMyReviews();
 }
 }
 
-// Pagination variables
 let currentPage = 1;
 let totalPages = 1;
 
-// Fetch trending movies with page number
 async function fetchTrendingMovies(page = 1) {
 try {
 const response = await fetch(`/api/tmdb?endpoint=trending/movie/week?page=${page}`);
@@ -133,7 +121,6 @@ if (pageSpan) {
 pageSpan.textContent = `Page ${currentPage} of ${totalPages}`;
 }
 
-// Disable buttons on first/last page
 document.getElementById('prev-page').disabled = currentPage === 1;
 document.getElementById('next-page').disabled = currentPage === totalPages;
 
@@ -144,23 +131,20 @@ document.getElementById('trending-movies').innerHTML =
 }
 }
 
-// Change page
 function changePage(delta) {
 const newPage = currentPage + delta;
 if (newPage >= 1 && newPage <= totalPages) {
 fetchTrendingMovies(newPage);
-window.scrollTo({ top: 0, behavior: 'smooth' }); // scroll to top
+window.scrollTo({ top: 0, behavior: 'smooth' }); 
 }
 }
 
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
 fetchTrendingMovies();
 });
 
 
 
-// Search movies
 let searchTimeout;
 function handleSearch(event) {
 clearTimeout(searchTimeout);
@@ -184,7 +168,6 @@ console.error('Error searching movies:', error);
 }
 }
 
-// Display movies in grid
 function displayMovies(movies, containerId) {
 const container = document.getElementById(containerId);
 
@@ -211,13 +194,11 @@ container.innerHTML = movies.map(movie => `
      `).join('');
 }
 
-// Show movie details with reviews
 async function showMovieDetails(movieId) {
 try {
 const response = await fetch(`/api/tmdb?endpoint=movie/${movieId}?`);
 const movie = await response.json();
 
-// Get reviews for this movie from local storage
 const movieReviews = reviews.filter(r => r.movieId === movieId);
 const avgRating = movieReviews.length > 0 
 ? (movieReviews.reduce((sum, r) => sum + r.rating, 0) / movieReviews.length).toFixed(1)
@@ -307,14 +288,12 @@ console.error('Error fetching movie details:', error);
 }
 }
 
-// Close modal
 function closeModal(event) {
 if (!event || event.target.id === 'movie-modal') {
 document.getElementById('movie-modal').classList.add('hidden');
 }
 }
 
-// Star rating system
 let selectedRating = 0;
 function setRating(rating) {
 selectedRating = rating;
@@ -328,7 +307,6 @@ star.classList.remove('active');
 });
 }
 
-// Submit review
 function submitReview(event, movieId, movieTitle, posterPath) {
 event.preventDefault();
 
@@ -347,34 +325,27 @@ timestamp: new Date().toISOString()
 
 reviews.unshift(review);
 localStorage.setItem('movieReviews', JSON.stringify(reviews));
-
-// Refresh the movie details to show new review
 showMovieDetails(movieId);
 
 alert('Review submitted successfully!');
 }
 
-// Delete review
 function deleteReview(reviewId) {
 if (confirm('Are you sure you want to delete this review?')) {
 reviews = reviews.filter(r => r.id !== reviewId);
 localStorage.setItem('movieReviews', JSON.stringify(reviews));
 
-// Find current movie ID and refresh
 const modalContent = document.getElementById('modal-content').innerHTML;
 const currentMovieId = reviews.length > 0 ? reviews[0].movieId : null;
 
-// Refresh current view
 if (document.getElementById('movie-modal').classList.contains('hidden')) {
 displayMyReviews();
 } else {
-// Extract movie ID from modal and refresh
-location.reload(); // Simple solution to refresh modal
+location.reload(); 
 }
 }
 }
 
-// Display user's reviews
 function displayMyReviews() {
 const container = document.getElementById('reviews-list');
 
@@ -405,8 +376,6 @@ container.innerHTML = reviews.map(review => `
        </div>
      `).join('');
 }
-
-// Initialize app
 document.addEventListener('DOMContentLoaded', () => {
 fetchTrendingMovies();
 });
